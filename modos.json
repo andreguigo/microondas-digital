@@ -1,0 +1,42 @@
+[
+  {
+    "Nome": "Pipoca",
+    "Alimento": "Pipoca",
+    "Potencia": 7,
+    "Tempo": 180,
+    "Caractere": "*",
+    "Instrucoes": "Observar o barulho de estouros do milho, caso houver um intervalo de mais de 10 segundos entre um estouro e outro, interrompa o aquecimento."
+  },
+  {
+    "Nome": "Leite",
+    "Alimento": "Leite",
+    "Potencia": 5,
+    "Tempo": 300,
+    "Caractere": "*",
+    "Instrucoes": "Cuidado com aquecimento de l\u00EDquidos, o choque t\u00E9rmico aliado ao movimento do recipiente pode causar fervura imediata causando risco de queimaduras."
+  },
+  {
+    "Nome": "Carne",
+    "Alimento": "Carne",
+    "Potencia": 4,
+    "Tempo": 840,
+    "Caractere": "*",
+    "Instrucoes": "Interrompa o processo na metade e vire o conte\u00FAdo com a parte de baixo para cima para o descongelamento uniforme."
+  },
+  {
+    "Nome": "Frango",
+    "Alimento": "Frango",
+    "Potencia": 7,
+    "Tempo": 480,
+    "Caractere": "*",
+    "Instrucoes": "Interrompa o processo na metade e vire o conte\u00FAdo com a parte de baixo para cima para o descongelamento uniforme."
+  },
+  {
+    "Nome": "Feij\u00E3o",
+    "Alimento": "Feij\u00E3o",
+    "Potencia": 9,
+    "Tempo": 480,
+    "Caractere": "*",
+    "Instrucoes": "Deixe o recipiente destampado e em casos de pl\u00E1stico, cuidado ao retirar o recipiente pois o mesmo pode perder resist\u00EAncia em altas temperaturas."
+  }
+]
