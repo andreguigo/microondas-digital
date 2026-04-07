@@ -5,7 +5,7 @@ namespace Microondas.Aplicacao.Contratos;
 
 public interface IMicroondasServico
 {
-    Task AquecerAsync(int tempo, int? potencia, TipoAquecimento tipo = TipoAquecimento.Manual);
+    Task AquecerAsync(int tempo, int? potencia, TipoAquecimento tipo = TipoAquecimento.Manual, string? instrucoes = null);
     Task InicioRapidoAsync();
     Task<List<ModoAquecimento>> ListarModosAsync();
     Task AquecerModoAsync(string nome);

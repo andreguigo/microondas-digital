@@ -21,7 +21,7 @@ public class MicroondasServico : IMicroondasServico
         _controlePausa = controlePausa;
     }
 
-    public async Task AquecerAsync(int tempo, int? potencia, TipoAquecimento tipo = TipoAquecimento.Manual)
+    public async Task AquecerAsync(int tempo, int? potencia, TipoAquecimento tipo = TipoAquecimento.Manual, string? instrucoes = null)
     {
         var potenciaEfetiva = potencia ?? 10;
 
@@ -31,6 +31,12 @@ public class MicroondasServico : IMicroondasServico
 
             Console.WriteLine($"Tempo: {aquecimento.ObterTempoFormatado()}");
             Console.WriteLine($"Potência: {potenciaEfetiva}");
+            Console.WriteLine($"Tipo: {tipo}");
+            
+            if (!string.IsNullOrEmpty(instrucoes))
+                Console.WriteLine($"Instruções: {instrucoes}");
+
+            Console.ReadLine();
 
             await ExecutarAquecimentoAsync(aquecimento);
         }
@@ -61,7 +67,7 @@ public class MicroondasServico : IMicroondasServico
             return;
         }
 
-        await AquecerAsync(modo.Tempo, modo.Potencia, TipoAquecimento.PreDefinido);
+        await AquecerAsync(modo.Tempo, modo.Potencia, TipoAquecimento.PreDefinido, modo.Instrucoes);
     }
 
     private async Task ExecutarAquecimentoAsync(Aquecimento aquecimento)
