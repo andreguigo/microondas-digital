@@ -21,18 +21,19 @@ public class MicroondasServico : IMicroondasServico
         _controlePausa = controlePausa;
     }
 
-    public async Task AquecerAsync(int tempo, int? potencia, TipoAquecimento tipo = TipoAquecimento.Manual, string? instrucoes = null)
+    public async Task AquecerAsync(int tempo, int? potencia, TipoAquecimento tipo = TipoAquecimento.Manual, string? instrucoes = null, char? caractere = null)
     {
         var potenciaEfetiva = potencia ?? 10;
+        var caractereEfetivo = caractere ?? '.';
 
         try
         {
-            var aquecimento = new Aquecimento(tempo, potenciaEfetiva, tipo);
+            var aquecimento = new Aquecimento(tempo, potenciaEfetiva, caractereEfetivo, tipo);
 
             Console.WriteLine($"Tempo: {aquecimento.ObterTempoFormatado()}");
             Console.WriteLine($"Potência: {potenciaEfetiva}");
             Console.WriteLine($"Tipo: {tipo}");
-            
+
             if (!string.IsNullOrEmpty(instrucoes))
                 Console.WriteLine($"Instruções: {instrucoes}");
 
@@ -67,7 +68,7 @@ public class MicroondasServico : IMicroondasServico
             return;
         }
 
-        await AquecerAsync(modo.Tempo, modo.Potencia, TipoAquecimento.PreDefinido, modo.Instrucoes);
+        await AquecerAsync(modo.Tempo, modo.Potencia, TipoAquecimento.PreDefinido, modo.Instrucoes, modo.Caractere);
     }
 
     private async Task ExecutarAquecimentoAsync(Aquecimento aquecimento)
@@ -89,8 +90,8 @@ public class MicroondasServico : IMicroondasServico
 
                 await _controlePausa.AguardarSePausadoAsync();
 
-                var indicadorPotencia = new string('.', aquecimento.Potencia);
-                
+                var indicadorPotencia = new string(aquecimento.Caractere, aquecimento.Potencia);
+
                 Console.Write($"{indicadorPotencia} Tempo restante: {new Aquecimento(_tempoRestante).ObterTempoFormatado()} ");
 
                 await Task.Delay(1000, token);
