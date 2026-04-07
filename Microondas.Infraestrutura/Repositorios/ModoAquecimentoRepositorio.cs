@@ -6,16 +6,45 @@ namespace Microondas.Infraestrutura.Repositorios;
 
 public class ModoAquecimentoRepositorio : IModoAquecimentoRepositorio
 {
-    private const string FilePath = "modos.json";
+    private readonly string _filePath;
+    private readonly JsonSerializerOptions _jsonOptions = new()
+    {
+        WriteIndented = true,
+        Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+    };
+
+    public ModoAquecimentoRepositorio(string filePath)
+    {
+        _filePath = filePath;
+    }
 
     public async Task<List<ModoAquecimento>> ListarAsync()
     {
-        if (!File.Exists(FilePath))
+        if (!File.Exists(_filePath))
             await CriarPadraoAsync();
 
-        var json = await File.ReadAllTextAsync(FilePath);
+        var json = await File.ReadAllTextAsync(_filePath);
 
         return JsonSerializer.Deserialize<List<ModoAquecimento>>(json)!;
+    }
+
+    public async Task<bool> CaractereExisteAsync(char caractere)
+    {
+        var modos = await ListarAsync();
+        return modos.Any(m => m.Caractere == caractere);
+    }
+
+    public async Task AdicionarAsync(ModoAquecimento modo)
+    {
+        var modos = await ListarAsync();
+        modos.Add(modo);
+        await SalvarAsync(modos);
+    }
+
+    private async Task SalvarAsync(List<ModoAquecimento> modos)
+    {
+        var json = JsonSerializer.Serialize(modos, _jsonOptions);
+        await File.WriteAllTextAsync(_filePath, json);
     }
 
     private async Task CriarPadraoAsync()
@@ -29,11 +58,6 @@ public class ModoAquecimentoRepositorio : IModoAquecimentoRepositorio
             new("Feijão", "Feijão", 9, 480, '*', "Deixe o recipiente destampado e em casos de plástico, cuidado ao retirar o recipiente pois o mesmo pode perder resistência em altas temperaturas.")
         };
 
-        var json = JsonSerializer.Serialize(modos, new JsonSerializerOptions
-        {
-            WriteIndented = true
-        });
-
-        await File.WriteAllTextAsync(FilePath, json);
+        await SalvarAsync(modos);
     }
 }
