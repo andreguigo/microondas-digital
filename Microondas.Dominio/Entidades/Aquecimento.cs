@@ -14,12 +14,13 @@ public class Aquecimento
     private const int PotenciaMinima = 1;
     private const int PotenciaMaxima = 10;
 
-    public Aquecimento(int tempoSegundos, int potencia, TipoAquecimento tipo)
+    public Aquecimento(int tempoSegundos, int potencia, char caractere, TipoAquecimento tipo)
     {
         Validar(tempoSegundos, potencia, tipo);
 
         TempoSegundos = tempoSegundos;
         Potencia = potencia;
+        Caractere = caractere;
         Tipo = tipo;
     }
 
