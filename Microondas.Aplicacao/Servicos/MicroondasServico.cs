@@ -1,39 +1,38 @@
+using Microondas.Aplicacao.Contratos;
 using Microondas.Dominio.Entidades;
 using Microondas.Dominio.Enums;
-using Microondas.Dominio.Interfaces;
-using Microondas.Aplicacao.Contratos;
-using Microondas.Infraestrutura.Concorrencias;
+using Microondas.Dominio;
 
-namespace Microondas.Dominio.Servicos;
+namespace Microondas.Aplicacao.Servicos;
 
 public class MicroondasServico : IMicroondasServico
 {
     private readonly IModoAquecimentoRepositorio _repositorio;
-    private CancellationTokenSource? _cts;
-    private int _tempoRestante;
-    private Aquecimento? _aquecimento;
-    
-    private readonly PauseTokenSource _pause = new();   
-    private EstadoExecucao _estado;
+    private readonly IControlePausa _controlePausa;
 
-    public MicroondasServico(IModoAquecimentoRepositorio repositorio, PauseTokenSource pause)
+    private CancellationTokenSource? _cancelamento;
+    private int _tempoRestante;
+    private Aquecimento? _aquecimentoAtual;
+    private EstadoExecucao _estado;
+    
+    public MicroondasServico(IModoAquecimentoRepositorio repositorio, IControlePausa controlePausa)
     {
         _repositorio = repositorio;
-        _pause = pause;
+        _controlePausa = controlePausa;
     }
 
     public async Task AquecerAsync(int tempo, int? potencia, TipoAquecimento tipo = TipoAquecimento.Manual)
     {
-        potencia ??= 30;
+        var potenciaEfetiva = potencia ?? 10;
 
         try
         {
-            var aquecimento = new Aquecimento(tempo, potencia.Value, tipo);
+            var aquecimento = new Aquecimento(tempo, potenciaEfetiva, tipo);
 
             Console.WriteLine($"Tempo: {aquecimento.ObterTempoFormatado()}");
-            Console.WriteLine($"Potência: {potencia}");
+            Console.WriteLine($"Potência: {potenciaEfetiva}");
 
-            await ExecutarAsync(aquecimento);
+            await ExecutarAquecimentoAsync(aquecimento);
         }
         catch (Exception ex)
         {
@@ -41,48 +40,52 @@ public class MicroondasServico : IMicroondasServico
         }
     }
 
-    public async Task InicioRapidoAsync()
+    public Task InicioRapidoAsync()
     {
-        await AquecerAsync(30, 10);
+        return AquecerAsync(30, 10);
     }
 
-    public async Task<List<ModoAquecimento>> ListarModosAsync()
+    public Task<List<ModoAquecimento>> ListarModosAsync()
     {
-        return await _repositorio.ListarAsync();
+        return _repositorio.ListarAsync();
     }
 
     public async Task AquecerModoAsync(string nome)
     {
         var modo = (await _repositorio.ListarAsync())
-            .First(x => x.Nome == nome);
+            .FirstOrDefault(x => x.Nome.Equals(nome, StringComparison.OrdinalIgnoreCase));
+        
+        if (modo is null)
+        {
+            Console.WriteLine("Modo de aquecimento não encontrado.");
+            return;
+        }
 
         await AquecerAsync(modo.Tempo, modo.Potencia, TipoAquecimento.PreDefinido);
     }
 
-    private async Task ExecutarAsync(Aquecimento aquecimento)
+    private async Task ExecutarAquecimentoAsync(Aquecimento aquecimento)
     {
-        _aquecimento = aquecimento;
+        _aquecimentoAtual = aquecimento;
+        _cancelamento = new CancellationTokenSource();
 
-        _cts = new CancellationTokenSource();
-        var token = _cts.Token;
-
+        var token = _cancelamento.Token;
         _tempoRestante = aquecimento.TempoSegundos;
         _estado = EstadoExecucao.Aquecendo;
 
         Console.WriteLine("SPACE = Pausar/Continuar | C = Cancelar | Enter = +30s");
 
-        var tarefa = Task.Run(async () =>
+        var aquecimentoTask = Task.Run(async () =>
         {
             while (_tempoRestante > 0)
             {
                 token.ThrowIfCancellationRequested();
 
-                await _pause.Token.WaitIfPausedAsync();
+                await _controlePausa.AguardarSePausadoAsync();
 
                 var indicadorPotencia = new string('.', aquecimento.Potencia);
-                Console.Write($"{indicadorPotencia} ");
-
-                Console.WriteLine($"Tempo restante: {new Aquecimento(_tempoRestante).ObterTempoFormatado()}   ");
+                
+                Console.Write($"{indicadorPotencia} Tempo restante: {new Aquecimento(_tempoRestante).ObterTempoFormatado()} ");
 
                 await Task.Delay(1000, token);
 
@@ -92,17 +95,16 @@ public class MicroondasServico : IMicroondasServico
             _estado = EstadoExecucao.Concluido;
         }, token);
 
-        var tecladoTask = MonitorarTeclado();
+        var tecladoTask = MonitorarTecladoAsync();
 
-        await Task.WhenAny(tarefa, tecladoTask);
-
-        _cts.Cancel();
+        await Task.WhenAny(aquecimentoTask, tecladoTask);
+        _cancelamento.Cancel();
 
         try
         {
-            await tarefa;
+            await aquecimentoTask;
 
-            if (_estado == EstadoExecucao.Concluido)
+            if (_estado == EstadoExecucao.Concluido) 
                 Console.WriteLine("\nAquecimento concluído!");
         }
         catch (OperationCanceledException)
@@ -112,24 +114,22 @@ public class MicroondasServico : IMicroondasServico
         }
     }
 
-    private async Task MonitorarTeclado()
+    private Task MonitorarTecladoAsync()
     {
-        await Task.Run(() =>
+        return Task.Run(() =>
         {
             while (true)
             {
-                var key = Console.ReadKey(true).Key;
+                var tecla = Console.ReadKey(true).Key;
 
-                switch (key)
+                switch (tecla)
                 {
                     case ConsoleKey.Spacebar:
                         AlternarPausa();
                         break;
-
                     case ConsoleKey.Enter:
                         AdicionarTempo();
                         break;
-
                     case ConsoleKey.C:
                         Cancelar();
                         return;
@@ -140,35 +140,35 @@ public class MicroondasServico : IMicroondasServico
 
     private void AlternarPausa()
     {
-        if (_estado == EstadoExecucao.Aquecendo)
+        if (_controlePausa.EstaPausado)
         {
-            _pause.Pause();
-            _estado = EstadoExecucao.Pausado;
-            Console.WriteLine("\nPausado");
-        }
-        else if (_estado == EstadoExecucao.Pausado)
-        {
-            _pause.Resume();
+            _controlePausa.Retomar();
             _estado = EstadoExecucao.Aquecendo;
             Console.WriteLine("\nRetomado");
+        }
+        else
+        {
+            _controlePausa.Pausar();
+            _estado = EstadoExecucao.Pausado;
+            Console.WriteLine("\nPausado");
         }
     }
 
     private void Cancelar()
     {
         _estado = EstadoExecucao.Cancelado;
-        _cts?.Cancel();
+        _cancelamento?.Cancel();
         Console.WriteLine("\nCancelado");
     }
 
     private void AdicionarTempo()
     {
-        if (_aquecimento is null)
+        if (_aquecimentoAtual is null)
             return;
 
         try
         {
-            _tempoRestante = _aquecimento.AdicionarTempo(_tempoRestante, 30);
+            _tempoRestante = _aquecimentoAtual.AdicionarTempo(_tempoRestante, 30);
             Console.WriteLine("\n+30 segundos adicionados");
         }
         catch (InvalidOperationException ex)

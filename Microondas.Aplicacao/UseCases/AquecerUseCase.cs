@@ -1,6 +1,5 @@
-using Microondas.Aplicacao.DTOs;
-using Microondas.Dominio.Interfaces;
 using Microondas.Aplicacao.Contratos;
+using Microondas.Aplicacao.Dtos;
 
 namespace Microondas.Aplicacao.UseCases;
 
@@ -13,8 +12,8 @@ public class AquecerUseCase
         _servico = servico;
     }
 
-    public async Task Executar(AquecerRequestDto dto)
+    public Task ExecutarAsync(AquecerRequestDto request)
     {
-        await _servico.AquecerAsync(dto.Tempo, dto.Potencia);
+        return _servico.AquecerAsync(request.Tempo, request.Potencia);
     }
 }

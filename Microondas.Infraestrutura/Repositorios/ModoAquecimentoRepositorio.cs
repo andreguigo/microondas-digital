@@ -1,6 +1,6 @@
 using System.Text.Json;
 using Microondas.Dominio.Entidades;
-using Microondas.Dominio.Interfaces;
+using Microondas.Dominio;
 
 namespace Microondas.Infraestrutura.Repositorios;
 

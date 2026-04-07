@@ -1,15 +1,14 @@
 using Microondas.Aplicacao;
-using Microondas.Dominio.Servicos;
-using Microondas.Dominio.Interfaces;
-using Microondas.Infraestrutura.Repositorios;
+using Microondas.App;
+using Microondas.Aplicacao.Servicos;
 using Microondas.Infraestrutura.Concorrencias;
-using Microondas.Dominio.Enums;
+using Microondas.Infraestrutura.Repositorios;
 
-IModoAquecimentoRepositorio repositorio = new ModoAquecimentoRepositorio();
-var pause = new PauseTokenSource();
-var dominioServico = new MicroondasServico(repositorio, pause);
-var appService = new MicroondasAppServico(dominioServico);
+var repositorio = new ModoAquecimentoRepositorio();
+var controlePausa = new ControlePausa();
+var servicoMicroondas = new MicroondasServico(repositorio, controlePausa);
+var servicoAplicacao = new MicroondasAppServico(servicoMicroondas);
 
-var app = new ConsoleApp(appService);
+var app = new ConsoleApp(servicoAplicacao);
 
 await app.ExecutarAsync();

@@ -1,6 +1,7 @@
-using Microondas.Aplicacao.DTOs;
+using Microondas.Aplicacao;
+using Microondas.Aplicacao.Dtos;
 
-namespace Microondas.Aplicacao;
+namespace Microondas.App;
 
 public class ConsoleApp
 {
@@ -22,21 +23,21 @@ public class ConsoleApp
             Console.WriteLine("3 - Modos pré-definidos");
             Console.WriteLine("0 - Sair");
 
-            var op = Console.ReadLine();
+            var opcao = Console.ReadLine();
 
-            switch (op)
+            switch (opcao)
             {
                 case "1":
-                    await ManualAsync();
+                    await IniciarAquecimentoManualAsync();
                     break;
 
                 case "2":
                     await _appService.InicioRapidoAsync();
-                    Pausar();
+                    PausarFluxo();
                     break;
 
                 case "3":
-                    await ModosAsync();
+                    await IniciarAquecimentoPorModoAsync();
                     break;
 
                 case "0":
@@ -44,37 +45,37 @@ public class ConsoleApp
 
                 default:
                     Console.WriteLine("Opção inválida!");
-                    Pausar();
+                    PausarFluxo();
                     break;
             }
         }
     }
 
-    private async Task ManualAsync()
+    private async Task IniciarAquecimentoManualAsync()
     {
         Console.Write("Tempo (segundos): ");
-        if (!int.TryParse(Console.ReadLine(), out int tempo))
+        if (!int.TryParse(Console.ReadLine(), out var tempo))
         {
             Console.WriteLine("Tempo inválido!");
-            Pausar();
+            PausarFluxo();
             return;
         }
 
         Console.Write("Potência (1-10, opcional): ");
-        var entradaPot = Console.ReadLine();
+        var entradaPotencia = Console.ReadLine();
 
         int? potencia = null;
 
-        if (!string.IsNullOrWhiteSpace(entradaPot))
+        if (!string.IsNullOrWhiteSpace(entradaPotencia))
         {
-            if (int.TryParse(entradaPot, out int pot))
-                potencia = pot;
-            else
+            if (!int.TryParse(entradaPotencia, out var potenciaInformada))
             {
                 Console.WriteLine("Potência inválida!");
-                Pausar();
+                PausarFluxo();
                 return;
             }
+
+            potencia = potenciaInformada;
         }
 
         var request = new AquecerRequestDto
@@ -84,39 +85,38 @@ public class ConsoleApp
         };
 
         await _appService.AquecerAsync(request);
-        Pausar();
+        PausarFluxo();
     }
 
-    private async Task ModosAsync()
+    private async Task IniciarAquecimentoPorModoAsync()
     {
         var modos = await _appService.ListarModosAsync();
 
         if (!modos.Any())
         {
             Console.WriteLine("Nenhum modo disponível.");
-            Pausar();
+            PausarFluxo();
             return;
         }
 
-        for (int i = 0; i < modos.Count; i++)
+        for (var i = 0; i < modos.Count; i++)
         {
             Console.WriteLine($"{i + 1} - {modos[i].Nome}");
         }
 
         Console.Write("Escolha um modo: ");
-        if (!int.TryParse(Console.ReadLine(), out int escolha) ||
-            escolha < 1 || escolha > modos.Count)
+        if (!int.TryParse(Console.ReadLine(), out var escolha) || escolha < 1 || escolha > modos.Count)
         {
             Console.WriteLine("Opção inválida!");
-            Pausar();
+            PausarFluxo();
             return;
         }
 
         await _appService.AquecerModoAsync(modos[escolha - 1].Nome);
-        Pausar();
+        PausarFluxo();
     }
     
-    private void Pausar()
+    private static void PausarFluxo()
     {
         Console.WriteLine("\nPressione qualquer tecla para continuar...");
         Console.ReadKey();

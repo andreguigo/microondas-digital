@@ -1,45 +1,41 @@
-using Microondas.Dominio.Interfaces;
-using Microondas.Aplicacao.DTOs;
+using Microondas.Aplicacao.Dtos;
+using Microondas.Aplicacao.UseCases;
 using Microondas.Aplicacao.Contratos;
 
 namespace Microondas.Aplicacao;
 
 public class MicroondasAppServico
 {
-    private readonly IMicroondasServico _servico;
+    private readonly AquecerUseCase _aquecerUseCase;
+    private readonly InicioRapidoUseCase _inicioRapidoUseCase;
+    private readonly ListarModosUseCase _listarModosUseCase;
+    private readonly AquecerModoUseCase _aquecerModoUseCase;
 
     public MicroondasAppServico(IMicroondasServico servico)
     {
-        _servico = servico;
+        _aquecerUseCase = new AquecerUseCase(servico);
+        _inicioRapidoUseCase = new InicioRapidoUseCase(servico);
+        _listarModosUseCase = new ListarModosUseCase(servico);
+        _aquecerModoUseCase = new AquecerModoUseCase(servico);
     }
 
-    public async Task AquecerAsync(AquecerRequestDto request)
+    public Task AquecerAsync(AquecerRequestDto request)
     {
-        await _servico.AquecerAsync(request.Tempo, request.Potencia);
+        return _aquecerUseCase.ExecutarAsync(request);
     }
 
-    public async Task InicioRapidoAsync()
+    public Task InicioRapidoAsync()
     {
-        await _servico.InicioRapidoAsync();
+        return _inicioRapidoUseCase.ExecutarAsync();
     }
 
-    public async Task<List<ModoDto>> ListarModosAsync()
+    public Task<List<ModoDto>> ListarModosAsync()
     {
-        var modos = await _servico.ListarModosAsync();
-
-        return modos.Select(m => new ModoDto
-        {
-            Nome = m.Nome,
-            Alimento = m.Alimento,
-            Tempo = m.Tempo,
-            Potencia = m.Potencia,
-            Instrucoes = m.Instrucoes,
-            Caractere = m.Caractere
-        }).ToList();
+        return _listarModosUseCase.ExecutarAsync();
     }
 
-    public async Task AquecerModoAsync(string nome)
+    public Task AquecerModoAsync(string nome)
     {
-        await _servico.AquecerModoAsync(nome);
+        return _aquecerModoUseCase.ExecutarAsync(nome);
     }
 }

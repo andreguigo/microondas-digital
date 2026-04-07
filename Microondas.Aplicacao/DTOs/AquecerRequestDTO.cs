@@ -1,4 +1,4 @@
-namespace Microondas.Aplicacao.DTOs;
+namespace Microondas.Aplicacao.Dtos;
 
 public class AquecerRequestDto
 {

@@ -2,7 +2,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Microondas.Dominio\Microondas.Dominio.csproj" />
-        <ProjectReference Include="..\Microondas.Infraestrutura\Microondas.Infraestrutura.csproj" />
     </ItemGroup>
 
     <PropertyGroup>
