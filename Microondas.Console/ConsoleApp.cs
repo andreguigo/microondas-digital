@@ -1,5 +1,6 @@
 using Microondas.Aplicacao;
 using Microondas.Aplicacao.Dtos;
+using Microondas.Infraestrutura.Repositorios;
 
 namespace Microondas.App;
 
@@ -21,6 +22,7 @@ public class ConsoleApp
             Console.WriteLine("1 - Aquecimento manual");
             Console.WriteLine("2 - Início rápido (+30s)");
             Console.WriteLine("3 - Modos pré-definidos");
+            Console.WriteLine("4 - Cadastrar programa");
             Console.WriteLine("0 - Sair");
 
             var opcao = Console.ReadLine();
@@ -38,6 +40,10 @@ public class ConsoleApp
 
                 case "3":
                     await IniciarAquecimentoPorModoAsync();
+                    break;
+
+                case "4":
+                    await CadastrarProgramaAsync();
                     break;
 
                 case "0":
@@ -113,6 +119,60 @@ public class ConsoleApp
         }
 
         await _appService.AquecerModoAsync(modos[escolha - 1].Nome);
+        PausarFluxo();
+    }
+
+    private async Task CadastrarProgramaAsync()
+    {
+        Console.Write("Nome do programa: ");
+        var nome = Console.ReadLine();
+
+        Console.Write("Alimento: ");
+        var alimento = Console.ReadLine();
+
+        Console.Write("Potência (1-10): ");
+        if (!int.TryParse(Console.ReadLine(), out var potencia))
+        {
+            Console.WriteLine("Potência inválida!");
+            PausarFluxo();
+            return;
+        }
+
+        Console.Write("Tempo (segundos): ");
+        if (!int.TryParse(Console.ReadLine(), out var tempo))
+        {
+            Console.WriteLine("Tempo inválido!");
+            PausarFluxo();
+            return;
+        }
+
+        Console.Write("Caractere de aquecimento: ");
+        var caractereInput = Console.ReadLine();
+
+        if (string.IsNullOrWhiteSpace(caractereInput) || caractereInput.Length != 1)
+        {
+            Console.WriteLine("Caractere de aquecimento inválido!");
+            PausarFluxo();
+            return;
+        }
+
+        var caractere = caractereInput[0];
+
+        Console.Write("Instruções adicionais (opcional): ");
+        var instrucoes = Console.ReadLine();
+
+        var request = new CadastrarProgramaRequestDto
+        {
+            Nome = nome,
+            Alimento = alimento,
+            Potencia = potencia,
+            Tempo = tempo,
+            Caractere = caractere,
+            Instrucoes = instrucoes
+        };
+
+        await _appService.CadastrarProgramaAsync(request);
+
         PausarFluxo();
     }
     
