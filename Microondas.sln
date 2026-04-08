@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microondas.Api", "Microondas.Api\Microondas.Api.csproj", "{D3B7CD6E-067B-462E-9CA3-5758F4E906D2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microondas.Testes", "Microondas.Testes\Microondas.Testes.csproj", "{8BEE3288-A95D-4A01-A835-A2A2DFA42619}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{D3B7CD6E-067B-462E-9CA3-5758F4E906D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D3B7CD6E-067B-462E-9CA3-5758F4E906D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D3B7CD6E-067B-462E-9CA3-5758F4E906D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BEE3288-A95D-4A01-A835-A2A2DFA42619}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BEE3288-A95D-4A01-A835-A2A2DFA42619}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BEE3288-A95D-4A01-A835-A2A2DFA42619}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BEE3288-A95D-4A01-A835-A2A2DFA42619}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
