@@ -1,0 +1,50 @@
+[
+  {
+    "Nome": "Pipoca",
+    "Alimento": "Pipoca",
+    "Potencia": 7,
+    "Tempo": 180,
+    "Caractere": "*",
+    "Instrucoes": "Observar o barulho de estouros do milho, caso houver um intervalo de mais de 10 segundos entre um estouro e outro, interrompa o aquecimento."
+  },
+  {
+    "Nome": "Leite",
+    "Alimento": "Leite",
+    "Potencia": 5,
+    "Tempo": 300,
+    "Caractere": "*",
+    "Instrucoes": "Cuidado com aquecimento de líquidos, o choque térmico aliado ao movimento do recipiente pode causar fervura imediata causando risco de queimaduras."
+  },
+  {
+    "Nome": "Carne",
+    "Alimento": "Carne",
+    "Potencia": 4,
+    "Tempo": 840,
+    "Caractere": "*",
+    "Instrucoes": "Interrompa o processo na metade e vire o conteúdo com a parte de baixo para cima para o descongelamento uniforme."
+  },
+  {
+    "Nome": "Frango",
+    "Alimento": "Frango",
+    "Potencia": 7,
+    "Tempo": 480,
+    "Caractere": "*",
+    "Instrucoes": "Interrompa o processo na metade e vire o conteúdo com a parte de baixo para cima para o descongelamento uniforme."
+  },
+  {
+    "Nome": "Feijão",
+    "Alimento": "Feijão",
+    "Potencia": 9,
+    "Tempo": 480,
+    "Caractere": "*",
+    "Instrucoes": "Deixe o recipiente destampado e em casos de plástico, cuidado ao retirar o recipiente pois o mesmo pode perder resistência em altas temperaturas."
+  },
+  {
+    "Nome": "Cozinhar Macarrão",
+    "Alimento": "Macarrão",
+    "Potencia": 6,
+    "Tempo": 160,
+    "Caractere": "#",
+    "Instrucoes": "A cada 2 minutos mexer a massa dentro do recipiente para que o cozimento seja uniforme."
+  }
+]
