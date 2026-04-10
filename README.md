@@ -1,4 +1,4 @@
-# Microondas Digital (.NET 8)
+# Microondas Digital
 
 Documentação técnica do projeto **Microondas Digital**, com visão de arquitetura, instruções de execução e funcionalidades da API/Console.
 
