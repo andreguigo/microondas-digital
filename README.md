@@ -21,7 +21,7 @@ A aplicação está organizada em camadas de domínio, aplicação, infraestrutu
 - `Microondas.Dominio`: entidades e regras centrais (`Aquecimento`, `ModoAquecimento` e enums).  
 - `Microondas.Aplicacao`: casos de uso (`Aquecer`, `Início Rápido`, `Listar Modos`, `Aquecer por Modo`, `Cadastrar Programa`) e contratos.  
 - `Microondas.Infraestrutura`: repositório de leitura/gravação JSON para modos e controle de pausa/retomada.
-- `MIcroondas.Api`: Minimal API com autenticação JWT, middlewares, logging e endpoints.  
+- `Microondas.Api`: Minimal API com autenticação JWT, middlewares, logging e endpoints.  
 - `Microondas.Console`: interface no terminal para uso local.  
 - `Microondas.Testes`: xUnit para domínio e casos de uso.
 
@@ -158,7 +158,7 @@ dotnet build Microondas.sln
 ### 6.3 Rodar API
 
 ```bash
-dotnet run --project MIcroondas.Api
+dotnet run --project Microondas.Api
 ```
 
 *Em ambiente de desenvolvimento (Development), o Swagger é habilitado automaticamente.*
